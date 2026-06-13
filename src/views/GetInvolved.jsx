@@ -93,7 +93,10 @@ export default function GetInvolved() {
       showSnackbar('Please fill out all required fields.', 'error');
       return;
     }
-    showSnackbar('Application submitted successfully! Our volunteer team will contact you shortly.', 'success');
+    // submit to Netlify forms
+    postToNetlify('student-application', studentForm)
+      .then(() => showSnackbar('Application submitted successfully! Our volunteer team will contact you shortly.', 'success'))
+      .catch(() => showSnackbar('Submission failed. Please try again later.', 'error'));
     setStudentForm({
       name: '',
       email: '',
@@ -110,7 +113,9 @@ export default function GetInvolved() {
       showSnackbar('Please fill out all required fields.', 'error');
       return;
     }
-    showSnackbar(`Thank you for applying as a ${volunteerForm.role}! We will review your profile and reach out.`, 'success');
+    postToNetlify('volunteer-application', volunteerForm)
+      .then(() => showSnackbar(`Thank you for applying as a ${volunteerForm.role}! We will review your profile and reach out.`, 'success'))
+      .catch(() => showSnackbar('Submission failed. Please try again later.', 'error'));
     setVolunteerForm({
       name: '',
       email: '',
@@ -127,7 +132,28 @@ export default function GetInvolved() {
       showSnackbar('Please enter or select a valid donation amount.', 'error');
       return;
     }
-    showSnackbar(`Thank you! Mock donation of ₹${finalAmount} initiated successfully. You are supporting our mission!`, 'success');
+    postToNetlify('donation', { amount: finalAmount })
+      .then(() => showSnackbar(`Thank you! Donation of ₹${finalAmount} recorded. You are supporting our mission!`, 'success'))
+      .catch(() => showSnackbar('Donation submission failed. Please try again later.', 'error'));
+  };
+
+  const postToNetlify = async (formName, payload) => {
+    const formData = new URLSearchParams();
+    formData.append('form-name', formName);
+    Object.keys(payload).forEach((key) => {
+      if (payload[key] !== undefined && payload[key] !== null) {
+        formData.append(key, payload[key]);
+      }
+    });
+
+    const resp = await fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: formData.toString(),
+    });
+
+    if (!resp.ok) throw new Error('Netlify form submission failed');
+    return resp;
   };
 
   // Dynamic Donation Impact Text
