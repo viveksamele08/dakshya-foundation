@@ -11,6 +11,7 @@ import HowItWorks from './views/HowItWorks';
 import Testimonials from './views/Testimonials';
 import GetInvolved from './views/GetInvolved';
 import { Box } from '@mui/material';
+import { Analytics } from '@vercel/analytics/next';
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
           <GetInvolved />
         </Box>
         <Footer />
+        <Analytics />
       </Box>
     </ThemeProvider>
   );
