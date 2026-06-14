@@ -146,13 +146,12 @@ export default function GetInvolved() {
       }
     });
 
-    const resp = await fetch('/', {
+    const resp = await fetch('/api/submit-form', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: formData.toString(),
     });
-
-    if (!resp.ok) throw new Error('Netlify form submission failed');
+    if (!resp.ok) throw new Error('Form submission failed');
     return resp;
   };
 
