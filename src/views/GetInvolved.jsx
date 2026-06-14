@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -19,6 +19,7 @@ import { motion } from 'framer-motion';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import SchoolIcon from '@mui/icons-material/School';
 import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
+import { useAuth0 } from '@auth0/auth0-react';
 import { siteConfig, getInvolvedConfig } from '../constants/content';
 
 function TabPanel({ children, value, index, ...other }) {
@@ -36,6 +37,7 @@ function TabPanel({ children, value, index, ...other }) {
 }
 
 export default function GetInvolved() {
+  const { user, isAuthenticated } = useAuth0();
   const [activeTab, setActiveTab] = useState(0);
   const [donationAmount, setDonationAmount] = useState('50');
   const [customAmount, setCustomAmount] = useState('');
@@ -59,6 +61,22 @@ export default function GetInvolved() {
     expertise: 'Backend Development',
     linkedin: '',
   });
+
+  // Pre-fill form with authenticated user data
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      setStudentForm((prev) => ({
+        ...prev,
+        name: prev.name || user.name || '',
+        email: prev.email || user.email || '',
+      }));
+      setVolunteerForm((prev) => ({
+        ...prev,
+        name: prev.name || user.name || '',
+        email: prev.email || user.email || '',
+      }));
+    }
+  }, [isAuthenticated, user]);
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
@@ -140,6 +158,12 @@ export default function GetInvolved() {
   const postToNetlify = async (formName, payload) => {
     const formData = new URLSearchParams();
     formData.append('form-name', formName);
+    
+    // Include auth0 user ID if authenticated
+    if (isAuthenticated && user?.sub) {
+      formData.append('auth0_user_id', user.sub);
+    }
+    
     Object.keys(payload).forEach((key) => {
       if (payload[key] !== undefined && payload[key] !== null) {
         formData.append(key, payload[key]);

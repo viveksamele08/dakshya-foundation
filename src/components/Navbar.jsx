@@ -16,6 +16,7 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import LoginButton from './LoginButton';
 
 const navItems = [
   { label: 'About', id: '#about-us' },
@@ -123,6 +124,9 @@ export default function Navbar() {
 
             {/* CTA & Mobile Menu Trigger */}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+                <LoginButton />
+              </Box>
               <Button
                 variant="contained"
                 color="secondary"
@@ -212,7 +216,8 @@ export default function Navbar() {
           ))}
         </List>
 
-        <Box sx={{ mt: 'auto', mb: 4 }}>
+        <Box sx={{ mt: 'auto', mb: 4, display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <LoginButton />
           <Button
             fullWidth
             variant="contained"
